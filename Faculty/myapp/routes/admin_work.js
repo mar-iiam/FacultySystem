@@ -4,7 +4,7 @@ const fs = require('fs'); // Ensure fs is imported
 const sequelize = require('../db/dbconnection'); // Import the sequelize instance
 const User = require('../db/models/UserModel'); // Ensure the correct path to the User model
 
-router.post('/', function(req, res, next) {
+router.post('/add_teacher', function(req, res, next) {
   const firstName = req.body.firstName;
   const lastName = req.body.lastName;
   const email=req.body.email;
@@ -12,6 +12,7 @@ router.post('/', function(req, res, next) {
   const password=req.body.password;
   const roleID = req.body.roleID;
   const photo = req.body.photo;
+  
   console.log(firstName)
   sequelize.sync({ alter: true })
     .then(() => {

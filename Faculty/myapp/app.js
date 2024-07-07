@@ -6,7 +6,7 @@ var logger = require('morgan');
 const body = require('body-parser')
 var indexRouter = require('./routes/index');
 var admin_workRouter = require('./routes/admin_work');
-
+const bcrypt = require('bcrypt');
 var app = express();
 
 // view engine setup

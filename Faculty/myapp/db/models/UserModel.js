@@ -1,7 +1,7 @@
 // models/Teacher.js
 const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../dbconnection');
-
+const bcrypt = require('bcrypt');
 class User extends Model {}
 
 User.init({
@@ -44,5 +44,11 @@ User.init({
   sequelize,
   modelName: 'User'
 });
-
+// Hash the password before saving the user
+User.addHook('beforeSave', async (user) => {
+  if (user.changed('password')) {
+      const saltRounds = 10;
+      user.password = await bcrypt.hash(user.password, saltRounds);
+  }
+});
 module.exports = User;
