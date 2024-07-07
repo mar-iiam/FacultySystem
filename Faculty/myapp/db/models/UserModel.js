@@ -1,54 +1,55 @@
-// models/Teacher.js
 const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../dbconnection');
 const bcrypt = require('bcrypt');
+
 class User extends Model {}
 
 User.init({
-  ID :{
-    type : DataTypes.INTEGER,
+  ID: {
+    type: DataTypes.INTEGER,
     allowNull: false,
     autoIncrement: true,
-    primaryKey: true
+    primaryKey: true,
   },
   firstName: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
   },
   lastName: {
-    type: DataTypes.STRING
+    type: DataTypes.STRING,
   },
   email: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true
+    unique: true,
   },
   NID: {
-    type: DataTypes.INTEGER, 
-    allowNull: false
+    type: DataTypes.INTEGER,
+    allowNull: false,
   },
   password: {
-    type : DataTypes.STRING,
-    allowNull:false
+    type: DataTypes.STRING,
+    allowNull: false,
   },
-  roleID :
-  {
-    type : DataTypes.INTEGER,
-    allowNull : false
+  roleID: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
   },
-  photo: {  // Add this field to store the photo as binary data
+  photo: {
     type: DataTypes.BLOB('long'),
-    allowNull: true
-  } 
+    allowNull: true,
+  },
 }, {
   sequelize,
-  modelName: 'User'
+  modelName: 'User',
+  hooks: {
+    beforeSave: async (user) => {
+      if (user.changed('password')) {
+        const saltRounds = 10;
+        user.password = await bcrypt.hash(user.password, saltRounds);
+      }
+    },
+  },
 });
-// Hash the password before saving the user
-User.addHook('beforeSave', async (user) => {
-  if (user.changed('password')) {
-      const saltRounds = 10;
-      user.password = await bcrypt.hash(user.password, saltRounds);
-  }
-});
+
 module.exports = User;
