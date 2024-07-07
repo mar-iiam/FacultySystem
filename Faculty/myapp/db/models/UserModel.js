@@ -37,7 +37,7 @@ User.init({
     allowNull : false
   },
   photo: {  // Add this field to store the photo as binary data
-    type: DataTypes.BLOB,
+    type: DataTypes.BLOB('long'),
     allowNull: true
   } 
 }, {
