@@ -27,7 +27,7 @@ async function readPhotoFile(photoPath) {
 
 // Route to add a teacher
 router.post('/add_teacher', async (req, res) => {
-  const { firstName, lastName, email, NID, password, roleID, photo } = req.body;
+  const { firstName, lastName, email, NID, password, photo } = req.body;
 
   try {
     console.log(`Creating user: ${firstName} ${lastName}`);
@@ -41,7 +41,7 @@ router.post('/add_teacher', async (req, res) => {
       email,
       NID,
       password,
-      roleID,
+      roleID:2,
       photo: image,
     });
 
@@ -49,7 +49,35 @@ router.post('/add_teacher', async (req, res) => {
     res.status(201).send('User created successfully');
   } catch (error) {
     console.error('Error creating user:', error);
-    res.status(500).send('Error creating user');
+    res.status(500).send('User email is already exsits');
+  }
+});
+
+// router to add new student 
+router.post('/add_student', async (req, res) => {
+  const { firstName, lastName, email, NID, password, photo } = req.body;
+
+  try {
+    console.log(`Creating user: ${firstName} ${lastName}`);
+
+    await initializeDatabase();
+    const image = await readPhotoFile(photo);
+
+    const user = await User.create({
+      firstName,
+      lastName,
+      email,
+      NID,
+      password,
+      roleID: 3,
+      photo: image,
+    });
+
+    console.log('User created:', user.toJSON());
+    res.status(201).send('User created successfully');
+  } catch (error) {
+    console.error('Error creating user:', error);
+    res.status(500).send('User email is already exsits ');
   }
 });
 
