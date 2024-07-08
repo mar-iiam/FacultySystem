@@ -3,8 +3,9 @@ const router = express.Router();
 const fs = require('fs').promises; // Use promises-based fs module
 const sequelize = require('../db/dbconnection');
 const User = require('../db/models/UserModel');
-const Course = require('../db/models/CourseModel')
+const Course = require('../db/models/CourseModel');
 const Exam = require('../db/models/ExamModel');
+
 // Utility function to initialize the database
 async function initializeDatabase() {
   try {
@@ -32,7 +33,6 @@ router.post('/add_teacher', async (req, res) => {
 
   try {
     console.log(`Creating user: ${firstName} ${lastName}`);
-
     await initializeDatabase();
     const image = await readPhotoFile(photo);
 
@@ -42,7 +42,7 @@ router.post('/add_teacher', async (req, res) => {
       email,
       NID,
       password,
-      roleID:2,
+      roleID: 2,
       photo: image,
     });
 
@@ -50,17 +50,16 @@ router.post('/add_teacher', async (req, res) => {
     res.status(201).send('User created successfully');
   } catch (error) {
     console.error('Error creating user:', error);
-    res.status(500).send('User email is already exsits');
+    res.status(500).send('User email already exists');
   }
 });
 
-// router to add new student 
+// Route to add a student
 router.post('/add_student', async (req, res) => {
   const { firstName, lastName, email, NID, password, photo } = req.body;
 
   try {
     console.log(`Creating user: ${firstName} ${lastName}`);
-
     await initializeDatabase();
     const image = await readPhotoFile(photo);
 
@@ -78,17 +77,16 @@ router.post('/add_student', async (req, res) => {
     res.status(201).send('User created successfully');
   } catch (error) {
     console.error('Error creating user:', error);
-    res.status(500).send('User email is already exsits ');
+    res.status(500).send('User email already exists');
   }
 });
 
-// Add new course router 
+// Route to add a new course
 router.post('/add_course', async (req, res) => {
-  const { courseName, courseCode, courseHours, courseDay , courseTime} = req.body;
+  const { courseName, courseCode, courseHours, courseDay, courseTime } = req.body;
 
   try {
-    console.log(`Creating user: ${courseName} ${courseCode}`);
-
+    console.log(`Creating course: ${courseName} ${courseCode}`);
     await initializeDatabase();
 
     const course = await Course.create({
@@ -96,43 +94,45 @@ router.post('/add_course', async (req, res) => {
       courseCode,
       courseHours,
       courseDay,
-      courseTime
+      courseTime,
     });
 
     console.log('Course created:', course.toJSON());
     res.status(201).send('Course created successfully');
   } catch (error) {
-    console.error('Error creating user:', error);
-    res.status(500).send('Course code is already exsits ');
+    console.error('Error creating course:', error);
+    res.status(500).send('Course code already exists');
   }
 });
 
-// Add new exam for the course 
+// Route to add a new exam for a course
 router.post('/add_exam', async (req, res) => {
-  const {ExamDate , ExamTime,CourseID} = req.body;
+  const { ExamDate, ExamTime, CourseID } = req.body;
 
   try {
-    console.log(`Creating user: ${ExamDate} ${ExamTime}`);
-
+    console.log(`Creating exam: ${ExamDate} ${ExamTime}`);
     await initializeDatabase();
 
     const exam = await Exam.create({
       ExamDate,
       ExamTime,
-      CourseID
+      CourseID,
     });
 
     console.log('Exam created:', exam.toJSON());
     res.status(201).send('Exam created successfully');
   } catch (error) {
-    console.error('Error creating user:', error);
-    res.status(500).send('Somthing went wrong');
+    console.error('Error creating exam:', error);
+    res.status(500).send('Something went wrong');
   }
 });
-router.put('/assign_teacher',async (req,res)=>{
-  const {teacherId,CourseID} = req.body;
-  try{
-    console.log("Assigining teacher to course")
+
+// Route to assign a teacher to a course
+router.patch('/assign_teacher', async (req, res) => {
+  const { teacherId, CourseID } = req.body;
+
+  try {
+    console.log("Assigning teacher to course");
     await initializeDatabase();
     const course = await Course.findByPk(CourseID);
 
@@ -141,13 +141,14 @@ router.put('/assign_teacher',async (req,res)=>{
     }
 
     course.teacherID = teacherId;
-
     await course.save();
-    console.log('teacher assigned :', course.toJSON());
-    res.status(201).send('Teacher assigned successfuly successfully');
-  }catch (error){
-    console.error('Error creating user:', error);
-    res.status(500).send('Somthing went wrong');
+
+    console.log('Teacher assigned:', course.toJSON());
+    res.status(200).send('Teacher assigned successfully');
+  } catch (error) {
+    console.error('Error assigning teacher:', error);
+    res.status(500).send('Something went wrong');
   }
-})
+});
+
 module.exports = router;
