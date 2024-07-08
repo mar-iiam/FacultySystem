@@ -3,7 +3,7 @@ const router = express.Router();
 const fs = require('fs').promises; // Use promises-based fs module
 const sequelize = require('../db/dbconnection');
 const User = require('../db/models/UserModel');
-
+const Course = require('../db/models/CourseModel')
 // Utility function to initialize the database
 async function initializeDatabase() {
   try {
@@ -81,4 +81,26 @@ router.post('/add_student', async (req, res) => {
   }
 });
 
+// Add new course router 
+router.post('/add_course', async (req, res) => {
+  const { courseName, courseCode, courseHours} = req.body;
+
+  try {
+    console.log(`Creating user: ${courseName} ${courseCode}`);
+
+    await initializeDatabase();
+
+    const course = await Course.create({
+      courseName,
+      courseCode,
+      courseHours,
+    });
+
+    console.log('Course created:', course.toJSON());
+    res.status(201).send('Course created successfully');
+  } catch (error) {
+    console.error('Error creating user:', error);
+    res.status(500).send('Course code is already exsits ');
+  }
+});
 module.exports = router;
