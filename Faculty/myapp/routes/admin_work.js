@@ -4,6 +4,7 @@ const fs = require('fs').promises; // Use promises-based fs module
 const sequelize = require('../db/dbconnection');
 const User = require('../db/models/UserModel');
 const Course = require('../db/models/CourseModel')
+const Exam = require('../db/models/ExamModel');
 // Utility function to initialize the database
 async function initializeDatabase() {
   try {
@@ -105,4 +106,48 @@ router.post('/add_course', async (req, res) => {
     res.status(500).send('Course code is already exsits ');
   }
 });
+
+// Add new exam for the course 
+router.post('/add_exam', async (req, res) => {
+  const {ExamDate , ExamTime,CourseID} = req.body;
+
+  try {
+    console.log(`Creating user: ${ExamDate} ${ExamTime}`);
+
+    await initializeDatabase();
+
+    const exam = await Exam.create({
+      ExamDate,
+      ExamTime,
+      CourseID
+    });
+
+    console.log('Exam created:', exam.toJSON());
+    res.status(201).send('Exam created successfully');
+  } catch (error) {
+    console.error('Error creating user:', error);
+    res.status(500).send('Somthing went wrong');
+  }
+});
+router.put('/assign_teacher',async (req,res)=>{
+  const {teacherId,CourseID} = req.body;
+  try{
+    console.log("Assigining teacher to course")
+    await initializeDatabase();
+    const course = await Course.findByPk(CourseID);
+
+    if (!course) {
+      return res.status(404).json({ error: 'Course not found' });
+    }
+
+    course.teacherID = teacherId;
+
+    await course.save();
+    console.log('teacher assigned :', course.toJSON());
+    res.status(201).send('Teacher assigned successfuly successfully');
+  }catch (error){
+    console.error('Error creating user:', error);
+    res.status(500).send('Somthing went wrong');
+  }
+})
 module.exports = router;
