@@ -23,6 +23,14 @@ Course.init({
     type: DataTypes.INTEGER,
     allowNull: false,
   },
+  courseDay: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  }, 
+  courseTime: {
+    type: DataTypes.TIME,
+    allowNull: false,
+  },
 
   teacherID: {
     type: DataTypes.INTEGER,

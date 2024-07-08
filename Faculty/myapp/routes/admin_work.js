@@ -83,7 +83,7 @@ router.post('/add_student', async (req, res) => {
 
 // Add new course router 
 router.post('/add_course', async (req, res) => {
-  const { courseName, courseCode, courseHours} = req.body;
+  const { courseName, courseCode, courseHours, courseDay , courseTime} = req.body;
 
   try {
     console.log(`Creating user: ${courseName} ${courseCode}`);
@@ -94,6 +94,8 @@ router.post('/add_course', async (req, res) => {
       courseName,
       courseCode,
       courseHours,
+      courseDay,
+      courseTime
     });
 
     console.log('Course created:', course.toJSON());
